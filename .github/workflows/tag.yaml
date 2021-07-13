@@ -20,13 +20,16 @@ jobs:
         with:
           fetch-depth: 0
       - name: "gh version"
-        run: gh --version
+        run: |
+          gh --version
+          gh pr list --help
       - name: define tag        
         # run: echo "RELEASE_TAG=$(git describe --tags)" >> $GITHUB_ENV
         run: echo "RELEASE_TAG=v.1.1" >> $GITHUB_ENV
       - name: "Build Changelog"
         run: |
-          export BODY=gh pr list -B main -s closed --json 'title,createdAt,url' -q '.[]|select(.createdAt >= "`git log -1 --date=short --format=%ai $(git rev-list --tags --max-count=2 --branches main | tail -1)`")'
+          gh pr list -B main -s closed --json 'title,createdAt,url' -q '.[]|select(.createdAt >= "`git log -1 --date=short --format=%ai $(git rev-list --tags --max-count=2 --branches main | tail -1)`")'  > 1
+          export BODY=`cat 1`
           echo "::set-env name=BODY::$BODY"
         id: changelog
         env:
