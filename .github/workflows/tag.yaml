@@ -31,7 +31,7 @@ jobs:
       - name: "Build Changelog"
         run: |
           gh pr list -B main -s closed --json 'title,createdAt,url' -q '.[]|select(.createdAt >= "`git log -1 --date=short --format=%ai $(git rev-list --tags --max-count=2 --branches main | tail -1)`")'  > 1
-          echo "BODY=$(cat 1)" >> $GITHUB_ENVs
+          echo "BODY=$(cat 1)" >> $GITHUB_ENV
         id: changelog
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
