@@ -20,7 +20,9 @@ jobs:
         with:
           fetch-depth: 0
       - name: "gh version"
-        run: gh --version
+        run: |
+          gh --version
+          gh pr list --help
       - name: define tag        
         # run: echo "RELEASE_TAG=$(git describe --tags)" >> $GITHUB_ENV
         run: echo "RELEASE_TAG=v.1.1" >> $GITHUB_ENV
