@@ -1,0 +1,40 @@
+name: tag-to-docker
+on:
+  push:
+    tags:
+      - '*'
+  pull_request:    
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.ADMIN_RELEASE_TOKEN }}
+      DOCKER_BUILDKIT: 1
+      COMPOSE_DOCKER_CLI_BUILD: 1
+      REGISTRY_PATH: ${{secrets.GCR_PATH}}
+      REGISTRY_HOST: ${{secrets.GCR_HOST}}
+      DOCKER_REGISTRY_USERNAME: ${{secrets.GCR_USERNAME}}
+    steps:
+      - name: "Checkout code"
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: define tag        
+        # run: echo "RELEASE_TAG=$(git describe --tags)" >> $GITHUB_ENV
+        run: echo "RELEASE_TAG=v.0.1" >> $GITHUB_ENV
+      - name: "Build Changelog"
+        run: |
+          export BODY=gh pr list -B main -s closed --json 'title,createdAt,url' -q '.[]|select(.createdAt >= "`git log -1 --date=short --format=%ai $(git rev-list --tags --max-count=2 --branches main | tail -1)`")'
+          echo "::set-env name=BODY::$BODY"
+        id: changelog
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      
+      - name: "Create GitHub release"
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.github_token }}
+        with:
+          tag_name: ${{ env.RELEASE_TAG }}
+          release_name: ${{ env.RELEASE_TAG }}
+          body: $BODY
