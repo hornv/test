@@ -30,9 +30,12 @@ jobs:
         run: echo "RELEASE_TAG=v.1.1" >> $GITHUB_ENV
       - name: "Build Changelog"
         run: |
-          gh pr list -B main -s closed --json 'title,createdAt,url' -q '.[]|select(.createdAt >= "`git log -1 --date=short --format=%ai $(git rev-list --tags --max-count=2 --branches main | tail -1)`")'
-          echo $BODY
-          echo "::set-output name=BODY::$BODY"
+          export time=$(git log -1 --date=short --format=%ai $(git log --oneline $(git describe --tags --abbrev=0 @^)..@|tail -1|awk '{print $1}'))
+          export $BODY=$(gh pr list -B main -s closed --json 'title,createdAt,url'  -q ".[]|select(.createdAt >= \"$time\")")
+          echo $time
+      #    gh pr list -B main -s closed --json 'title,createdAt,url' -q '.[]|select(.createdAt >= "`git log -1 --date=short --format=%ai $(git rev-list --tags --max-count=2 --branches main | tail -1)`")'
+      #    echo $BODY
+      #    echo "::set-output name=BODY::$BODY"
       #  echo "BODY=$(cat 1)" >> $GITHUB_ENV
         id: changelog
         env:
