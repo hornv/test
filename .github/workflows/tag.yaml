@@ -32,7 +32,7 @@ jobs:
         run: |
           gh pr list -B main -s closed --json 'title,createdAt,url' -q '.[]|select(.createdAt >= "`git log -1 --date=short --format=%ai $(git rev-list --tags --max-count=2 --branches main | tail -1)`")'
           echo $BODY
-          echo "::set-output name=BODY::BODY"
+          echo "::set-output name=BODY::$BODY"
       #  echo "BODY=$(cat 1)" >> $GITHUB_ENV
         id: changelog
         env:
