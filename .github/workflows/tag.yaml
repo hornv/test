@@ -35,11 +35,7 @@ jobs:
           echo 'EOF' >> $GITHUB_ENV
           echo $time
           echo $changelog    
-       #    echo "::set-output name=changelog::$changelog"
-      #    gh pr list -B main -s closed --json 'title,createdAt,url' -q '.[]|select(.createdAt >= "`git log -1 --date=short --format=%ai $(git rev-list --tags --max-count=2 --branches main | tail -1)`")'
-      #    echo $changelog
-          
-          #  echo "changelog=$(cat 1)" >> $GITHUB_ENV
+          echo "::set-output name=changelog::$changelog"
         id: changelog
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
@@ -50,5 +46,6 @@ jobs:
         with:
           tag_name: ${{ env.RELEASE_TAG }}
           release_name: ${{ env.RELEASE_TAG }}
-          body: "${{ env.changelog }}"
-          #  body: ${{ steps.changelog.outputs.changelog }}
+          #body: "${{ env.changelog }}"
+          body: |
+            ${{ steps.changelog.outputs.changelog }}
