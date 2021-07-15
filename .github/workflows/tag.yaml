@@ -21,7 +21,7 @@ jobs:
           fetch-depth: 0
       - name: define tag        
         # run: echo "RELEASE_TAG=$(git describe --tags)" >> $GITHUB_ENV
-        run: echo "RELEASE_TAG=v.1.5" >> $GITHUB_ENV
+        run: echo "RELEASE_TAG=v.1.6" >> $GITHUB_ENV
       - name: "Build Changelog"
         run: |
           export time=$(git log -1 --date=short --format=%ai $(git log --oneline $(git describe --tags --abbrev=0 @^)..@|tail -1|awk '{print $1}')|sed 's/ /T/g' )
@@ -35,7 +35,7 @@ jobs:
           echo 'EOF' >> $GITHUB_ENV
           echo $time
           echo $changelog    
-          echo "::set-output name=changelog::$changelog"
+      #    echo "::set-output name=changelog::$changelog"
         id: changelog
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
@@ -46,6 +46,6 @@ jobs:
         with:
           tag_name: ${{ env.RELEASE_TAG }}
           release_name: ${{ env.RELEASE_TAG }}
-          #body: "${{ env.changelog }}"
-          body: |
-            ${{ steps.changelog.outputs.changelog }}
+          body: "${{ env.changelog }}"
+         # body: |
+         #   ${{ steps.changelog.outputs.changelog }}
