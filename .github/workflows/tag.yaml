@@ -25,21 +25,21 @@ jobs:
       - name: "Build Changelog"
         run: |
           export time=$(git log -1 --date=short --format=%ai $(git log --oneline $(git describe --tags --abbrev=0 @^)..@|tail -1|awk '{print $1}')|sed 's/ /T/g' )
-          export BODY=$(gh pr list -B main -s closed --json 'title,createdAt,url'  -q ".[]|select(.createdAt >= \"$time\")" | jq -r '[ .title, .url]|@tsv')
-          export BODY=$(gh pr list -B main -s closed --json 'title,createdAt,url'  -q ".[]|select(.createdAt >= \"2\")" | jq -r '[ .title, .url]|@tsv')
-          BODY="${BODY//'%'/'%25'}"
-          BODY="${BODY//$'\n'/'%0A'}"
-          BODY="${BODY//$'\r'/'%0D'}"
-          echo 'BODY<<EOF' >> $GITHUB_ENV
-          echo $BODY >> $GITHUB_ENV
+          export changelog=$(gh pr list -B main -s closed --json 'title,createdAt,url'  -q ".[]|select(.createdAt >= \"$time\")" | jq -r '[ .title, .url]|@tsv')
+          export changelog=$(gh pr list -B main -s closed --json 'title,createdAt,url'  -q ".[]|select(.createdAt >= \"2\")" | jq -r '[ .title, .url]|@tsv')
+          changelog="${changelog//'%'/'%25'}"
+          changelog="${changelog//$'\n'/'%0A'}"
+          changelog="${changelog//$'\r'/'%0D'}"
+          echo 'changelog<<EOF' >> $GITHUB_ENV
+          echo $changelog >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
           echo $time
-          echo $BODY    
-       #    echo "::set-output name=BODY::$BODY"
+          echo $changelog    
+       #    echo "::set-output name=changelog::$changelog"
       #    gh pr list -B main -s closed --json 'title,createdAt,url' -q '.[]|select(.createdAt >= "`git log -1 --date=short --format=%ai $(git rev-list --tags --max-count=2 --branches main | tail -1)`")'
-      #    echo $BODY
+      #    echo $changelog
           
-          #  echo "BODY=$(cat 1)" >> $GITHUB_ENV
+          #  echo "changelog=$(cat 1)" >> $GITHUB_ENV
         id: changelog
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
@@ -50,6 +50,5 @@ jobs:
         with:
           tag_name: ${{ env.RELEASE_TAG }}
           release_name: ${{ env.RELEASE_TAG }}
-          body: |
-            ${{ env.GITHUB_ENV.BODY }}
-          #  body: ${{ steps.changelog.outputs.BODY }}
+          body: ${{ env.changelog }}
+          #  body: ${{ steps.changelog.outputs.changelog }}
