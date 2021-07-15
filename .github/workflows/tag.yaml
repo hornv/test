@@ -27,9 +27,7 @@ jobs:
           export time=$(git log -1 --date=short --format=%ai $(git log --oneline $(git describe --tags --abbrev=0 @^)..@|tail -1|awk '{print $1}')|sed 's/ /T/g' )
           export BODY=$(gh pr list -B main -s closed --json 'title,createdAt,url'  -q ".[]|select(.createdAt >= \"$time\")")
           export BODY=$(gh pr list -B main -s closed --json 'title,createdAt,url'  -q ".[]|select(.createdAt >= \"2\")")
-          BODY="${BODY//'%'/'%25'}"
-          BODY="${BODY//$'\n'/'%0A'}"
-          BODY="${BODY//$'\r'/'%0D'}"
+ 
           echo 'BODY<<EOF' >> $GITHUB_ENV 
           echo $BODY >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
