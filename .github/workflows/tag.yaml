@@ -35,8 +35,7 @@ jobs:
           echo 'EOF' >> $GITHUB_ENV
           echo $time
           echo $BODY    
- 
-      #    echo "::set-output name=BODY::$BODY"
+       #    echo "::set-output name=BODY::$BODY"
       #    gh pr list -B main -s closed --json 'title,createdAt,url' -q '.[]|select(.createdAt >= "`git log -1 --date=short --format=%ai $(git rev-list --tags --max-count=2 --branches main | tail -1)`")'
       #    echo $BODY
           
