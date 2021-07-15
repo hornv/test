@@ -30,10 +30,13 @@ jobs:
           BODY="${BODY//'%'/'%25'}"
           BODY="${BODY//$'\n'/'%0A'}"
           BODY="${BODY//$'\r'/'%0D'}"
-
+          echo 'BODY<<EOF' >> $GITHUB_ENV
+          echo $BODY >> $GITHUB_ENV
+          echo 'EOF' >> $GITHUB_ENV
           echo $time
           echo $BODY    
-          echo "::set-output name=BODY::$BODY"
+
+      #    echo "::set-output name=BODY::$BODY"
       #    gh pr list -B main -s closed --json 'title,createdAt,url' -q '.[]|select(.createdAt >= "`git log -1 --date=short --format=%ai $(git rev-list --tags --max-count=2 --branches main | tail -1)`")'
       #    echo $BODY
           
@@ -48,4 +51,5 @@ jobs:
         with:
           tag_name: ${{ env.RELEASE_TAG }}
           release_name: ${{ env.RELEASE_TAG }}
-          body: ${{ steps.changelog.outputs.BODY }}
+          body: ${{ env.GITHUB_ENV.BODY }}
+          # body: ${{ steps.changelog.outputs.BODY }}
