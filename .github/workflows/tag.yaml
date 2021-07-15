@@ -21,7 +21,7 @@ jobs:
           fetch-depth: 0
       - name: define tag        
         # run: echo "RELEASE_TAG=$(git describe --tags)" >> $GITHUB_ENV
-        run: echo "RELEASE_TAG=v.1.7" >> $GITHUB_ENV
+        run: echo "RELEASE_TAG=v.1.8" >> $GITHUB_ENV
       - name: "Build Changelog"
         run: |
           export time=$(git log -1 --date=short --format=%ai $(git log --oneline $(git describe --tags --abbrev=0 @^)..@|tail -1|awk '{print $1}')|sed 's/ /T/g' )
